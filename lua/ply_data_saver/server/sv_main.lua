@@ -127,7 +127,6 @@ function plyDataSaver.savePlyData(ply)
     local position = util.TableToJSON(plyDataSaver.GetPosition(ply))
     local aparence = util.TableToJSON(plyDataSaver.GetAparence(ply))
     local other = util.TableToJSON(plyDataSaver.GetOther(ply))
-    // Create Table plyDataSaver(steamID64, statistic, weapon, variable, position, aparence, other)
 
     // Update
     LinvLib.SQL.Query("UPDATE plyDataSaver SET statistic = '" .. statistic .. "', weapon = '" .. weapon .. "', variable = '" .. variable .. "', position = '" .. position .. "', aparence = '" .. aparence .. "', other = '" .. other .. "' WHERE steamID64 = '" .. steamID64 .. "'")
@@ -234,4 +233,11 @@ function plyDataSaver.loadPlyData(ply)
             ply:SetDeaths(statistic["deaths"])
         end
     end)
+end
+
+plyDataSaver.net = plyDataSaver.net or {}
+function plyDataSaver.net.clientReady(ply)
+    if (ply.plyDataSaverLoaded) then return end
+    plyDataSaver.loadPlyData(ply)
+    ply.plyDataSaverLoaded = true
 end
