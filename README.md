@@ -4,9 +4,20 @@ Save player position on deconnection and load it on connection.
 
 ## Features
 
-- Teleport player to last position
-- Unstuck player if last position is not valid
 - Team restriction
+- Regive on Spawn
+  - Weapons
+  - Ammo
+  - Armor
+  - Health
+  - Speed
+  - Energy (DarkRP)
+  - Model
+  - Color
+  - Size
+- Teleport player to last position
+- Auto Unstuck player if last position is not valid
+- Weapon restriction
 
 ## Requirements
 
