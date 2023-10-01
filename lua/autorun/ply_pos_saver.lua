@@ -17,7 +17,7 @@ end
 local folder = "ply_data_saver"
 local name = "Player Data Saver"
 local license = "CC BY-NC-SA 4.0"
-local version = "0.1.2"
+local version = "0.1.3"
 
 plyDataSaver = {
     ["Config"] = {},
