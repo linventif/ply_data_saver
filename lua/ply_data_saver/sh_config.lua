@@ -2,9 +2,32 @@
 // Configurations
 //
 
-// Player Info to Load
-plyDataSaver.Config.loadPos = true // On spawn, load the last position the player was at
-plyDataSaver.Config.loadModel = false // On spawn, load the last model the player was using
-plyDataSaver.Config.loadHealth = false // On spawn, load the last armor amount the player had
-plyDataSaver.Config.loadArmor = false // On spawn, load the last armor amount the player had
-plyDataSaver.Config.loadTeam = false // On spawn, load the last team the player was on
+// Position
+plyDataSaver.Config.loadPos = true
+
+// Model, Skin, Bodygroups, Color, Size
+plyDataSaver.Config.loadModel = false
+plyDataSaver.Config.loadSkin = false
+plyDataSaver.Config.loadBodygroups = true
+plyDataSaver.Config.loadColor = true
+plyDataSaver.Config.loadSize = true
+
+// Weapons & Ammo
+plyDataSaver.Config.loadWeapon = true
+plyDataSaver.Config.loadAmmo = true
+
+// Variables
+plyDataSaver.Config.loadHealth = true
+plyDataSaver.Config.loadArmor = true
+plyDataSaver.Config.loadFood = true
+
+// Team
+plyDataSaver.Config.loadTeam = false
+
+// Statistic
+plyDataSaver.Config.loadStat = false
+
+// Blacklist
+plyDataSaver.Config.blacklistWeapon = {
+    ["weapon_physcannon"] = true,
+} // This weapon will not be saved
