@@ -11,3 +11,9 @@ hook.Add("ShutDown", "plyDataSaver:SaveAllPlayerData", function()
         plyDataSaver.savePlyData(ply)
     end
 end)
+
+hook.Add("PlayerLoadout", "plyDataSaver:loadPlyData", function(ply)
+    if (ply.plyDataSaverLoaded) then return end
+    plyDataSaver.loadPlyData(ply)
+    ply.plyDataSaverLoaded = true
+end)
