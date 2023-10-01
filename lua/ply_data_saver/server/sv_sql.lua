@@ -4,6 +4,7 @@
 
 // Create DB Stucture
 hook.Add("LinvLib.SQL.Init", "plyDataSaver:SQL:Init", function()
+    // Create Table plyDataSaver(steamID64, pos, ang, health, armor, team, model, bodyGroup)
     LinvLib.SQL.Query("CREATE TABLE IF NOT EXISTS plyDataSaver (steamID64 CHAR(255), pos TEXT, ang TEXT, health INT, armor INT, team INT, model TEXT, bodyGroup TEXT, PRIMARY KEY (steamID64))")
 end)
 
@@ -32,7 +33,7 @@ function plyDataSaver.savePlyData(ply)
     local jsonAng = util.TableToJSON(tblAng)
 
     // Update
-    LinvLib.SQL.Query("INSERT INTO plyDataSaver (steamID64, pos, ang, health, armor, team, model, bodyGroup) VALUES ('" .. steamID64 .. "', '" .. jsonPos .. "', '" .. jsonAng .. "', '" .. health .. "', '" .. armor .. "', '" .. team .. "', '" .. model .. "', '" .. bodyGroup .. "') ON DUPLICATE KEY UPDATE pos = '" .. jsonPos .. "', ang = '" .. jsonAng .. "', health = '" .. health .. "', armor = '" .. armor .. "', team = '" .. team .. "', model = '" .. model .. "', bodyGroup = '" .. bodyGroup .. "'")
+    LinvLib.SQL.Query("UPDATE plyDataSaver SET pos = '" .. jsonPos .. "', ang = '" .. jsonAng .. "', health = " .. health .. ", armor = " .. armor .. ", team = " .. team .. ", model = '" .. model .. "', bodyGroup = '" .. bodyGroup .. "' WHERE steamID64 = '" .. steamID64 .. "'")
 end
 
 function plyDataSaver.loadPlyData(ply)
@@ -45,7 +46,11 @@ function plyDataSaver.loadPlyData(ply)
     // Query
     LinvLib.SQL.Query("SELECT * FROM plyDataSaver WHERE steamID64 = '" .. steamID64 .. "'", function(data)
         // Check if data is valid
-        if !data || !data[1] then return end
+        if !data || !data[1] then
+            // Insert
+            LinvLib.SQL.Query("INSERT INTO plyDataSaver (steamID64, pos, ang, health, armor, team, model, bodyGroup) VALUES ('" .. steamID64 .. "', 'pos', 'ang', 100, 100, 1, 'model', 'bodyGroup')")
+            return
+        end
 
         // Data
         local data = data[1]
