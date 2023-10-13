@@ -120,16 +120,21 @@ function plyDataSaver.savePlyData(ply)
     // ID
     local steamID64 = ply:SteamID64()
 
+    // Char ID
+    local charID = plyDataSaver.GetLinvCharID(ply) || 1
+
     // Data
     local statistic = util.TableToJSON(plyDataSaver.GetStatistic(ply))
     local weapon = util.TableToJSON(plyDataSaver.GetWeapon(ply))
     local variable = util.TableToJSON(plyDataSaver.GetVariable(ply))
     local position = util.TableToJSON(plyDataSaver.GetPosition(ply))
     local aparence = util.TableToJSON(plyDataSaver.GetAparence(ply))
-    local other = util.TableToJSON(plyDataSaver.GetOther(ply))
 
     // Update
-    LinvLib.SQL.Query("UPDATE plyDataSaver SET statistic = '" .. statistic .. "', weapon = '" .. weapon .. "', variable = '" .. variable .. "', position = '" .. position .. "', aparence = '" .. aparence .. "', other = '" .. other .. "' WHERE steamID64 = '" .. steamID64 .. "'")
+    LinvLib.SQL.Query("UPDATE plyDataSaver SET statistic = '" .. statistic .. "', weapon = '" .. weapon .. "', variable = '" .. variable .. "', position = '" .. position .. "', aparence = '" .. aparence .. "' WHERE steamID64 = '" .. steamID64 .. "' AND charID = '" .. charID .. "'")
+
+    // Call Hook
+    hook.Run("linv_plyDataSaver_savePlyData", ply)
 end
 
 //
@@ -143,8 +148,11 @@ function plyDataSaver.loadPlyData(ply)
     // ID
     local steamID64 = ply:SteamID64()
 
+    // Char ID
+    local charID = plyDataSaver.GetLinvCharID(ply) || 1
+
     // Data
-    LinvLib.SQL.Query("SELECT * FROM plyDataSaver WHERE steamID64 = '" .. steamID64 .. "'", function(data)
+    LinvLib.SQL.Query("SELECT * FROM plyDataSaver WHERE steamID64 = '" .. steamID64 .. "' AND charID = '" .. charID .. "'", function(data)
         // Check if data is valid
         if !data then
             // Insert
@@ -160,7 +168,6 @@ function plyDataSaver.loadPlyData(ply)
         local variable = util.JSONToTable(data["variable"]) or {}
         local position = util.JSONToTable(data["position"]) or {}
         local aparence = util.JSONToTable(data["aparence"]) or {}
-        local other = util.JSONToTable(data["other"]) or {}
 
         // Update
         if plyDataSaver.Config.loadPos && position["pos"] && position["ang"] then
@@ -232,6 +239,9 @@ function plyDataSaver.loadPlyData(ply)
             ply:SetFrags(statistic["frags"])
             ply:SetDeaths(statistic["deaths"])
         end
+
+        // Call Hook
+        hook.Run("linv_plyDataSaver_loadPlyData", ply)
     end)
 end
 
