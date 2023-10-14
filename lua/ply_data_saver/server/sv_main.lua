@@ -120,20 +120,22 @@ function plyDataSaver.loadPlyData(ply)
     // Data
     LinvLib.SQL.Query("SELECT * FROM plyDataSaver WHERE steamID64 = '" .. steamID64 .. "' AND charID = '" .. charID .. "'", function(data)
         // Check if data is valid
-        if !data then
+        if !data || !data[1] then
             // Insert
-            LinvLib.SQL.Query("INSERT INTO plyDataSaver (steamID64, statistic, weapon, variable, position, aparence, other) VALUES ('" .. steamID64 .. "', '[]', '[]', '[]', '[]', '[]', '[]')")
-            plyDataSaver.savePlyData(ply)
+            LinvLib.SQL.Query("INSERT INTO plyDataSaver (steamID64, charID) VALUES ('" .. steamID64 .. "', '" .. charID .. "')", function()
+                hook.Run("linv_plyDataSaver_SQL_Init_Player", ply)
+                plyDataSaver.savePlyData(ply)
+            end)
             return
         end
         data = data[1]
 
         // Get data
-        local statistic = util.JSONToTable(data["statistic"]) or {}
-        local weapon = util.JSONToTable(data["weapon"]) or {}
-        local variable = util.JSONToTable(data["variable"]) or {}
-        local position = util.JSONToTable(data["position"]) or {}
-        local aparence = util.JSONToTable(data["aparence"]) or {}
+        local statistic = util.JSONToTable(data["statistic"]) || {}
+        local weapon = util.JSONToTable(data["weapon"]) || {}
+        local variable = util.JSONToTable(data["variable"]) || {}
+        local position = util.JSONToTable(data["position"]) || {}
+        local aparence = util.JSONToTable(data["aparence"]) || {}
 
         // Update
         if plyDataSaver.Config.loadPos && position["pos"] && position["ang"] then
@@ -217,7 +219,7 @@ end
 
 plyDataSaver.net = plyDataSaver.net or {}
 function plyDataSaver.net.clientReady(ply)
-    if (ply.plyDataSaverLoaded) then return end
+    -- if (ply.plyDataSaverLoaded) then return end
     plyDataSaver.loadPlyData(ply)
     ply.plyDataSaverLoaded = true
 end
