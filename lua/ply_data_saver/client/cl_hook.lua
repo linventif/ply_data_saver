@@ -3,6 +3,8 @@
 //
 
 // Ready
-hook.Add("InitPostEntity", "plyDataSaver:InitPostEntity", function()
-    plyDataSaver.sendNet("clientReady")
-end)
+if (!linvChar) then
+    hook.Add("InitPostEntity", "plyDataSaver:InitPostEntity", function()
+        plyDataSaver.sendNet("clientReady")
+    end)
+end

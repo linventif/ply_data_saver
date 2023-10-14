@@ -8,17 +8,10 @@
 
 // Create Table plyDataSaver(steamID64, statistic, weapon, variable, position, aparence, other)
 function plyDataSaver.GetStatistic(ply)
-    local rtn = {}
-
-    local frag = ply:Frags()
-    local death = ply:Deaths()
-
-    rtn = {
-        ["frags"] = frag,
-        ["deaths"] = death
+    return {
+        ["frags"] = ply:Frags(),
+        ["deaths"] = ply:Deaths()
     }
-
-    return rtn
 end
 
 function plyDataSaver.GetWeapon(ply)
@@ -51,60 +44,33 @@ function plyDataSaver.GetWeapon(ply)
 end
 
 function plyDataSaver.GetVariable(ply)
-    local rtn = {}
-
-    local health = ply:Health()
-    local health_max = ply:GetMaxHealth()
-
-    local armor = ply:Armor()
-    local armor_max = ply:GetMaxArmor()
-
-    local energy = ply:GetNWInt("Energy") or 0
-    local ammo = ply:GetAmmo()
-
-    rtn = {
-        ["health"] = health,
-        ["health_max"] = health_max,
-        ["armor"] = armor,
-        ["armor_max"] = armor_max,
-        ["food"] = energy,
-        ["ammo"] = ammo,
-        ["team"] = ply:Team()
+    return {
+        ["health"] = ply:Health(),
+        ["health_max"] = ply:GetMaxHealth(),
+        ["armor"] = ply:Armor(),
+        ["armor_max"] = ply:GetMaxArmor(),
+        ["food"] = ply:GetNWInt("Energy") || 0,
+        ["ammo"] = ply:GetAmmo(),
+        ["team"] = ply:Team(),
+        ["name"] = ply:GetName()
     }
-
-    return rtn
 end
 
 function plyDataSaver.GetPosition(ply)
-    local rtn = {}
-
-    local pos = ply:GetPos()
-    local ang = ply:GetAngles()
-
-    rtn = {
-        ["pos"] = pos,
-        ["ang"] = ang
+    return {
+        ["pos"] = ply:GetPos(),
+        ["ang"] = ply:GetAngles()
     }
-
-    return rtn
 end
 
 function plyDataSaver.GetAparence(ply)
-    local rtn = {}
-
-    local model = ply:GetModel()
-    local skin = ply:GetSkin()
-    local bodygroup = ply:GetBodyGroups()
-
-    rtn = {
-        ["model"] = model,
-        ["skin"] = skin,
-        ["bodygroup"] = bodygroup,
+    return {
+        ["model"] = ply:GetModel(),
+        ["skin"] = ply:GetSkin(),
+        ["bodygroup"] = ply:GetBodyGroups(),
         ["color"] = ply:GetColor(),
         ["size"] = ply:GetModelScale()
     }
-
-    return rtn
 end
 
 function plyDataSaver.GetOther(ply)
@@ -121,7 +87,7 @@ function plyDataSaver.savePlyData(ply)
     local steamID64 = ply:SteamID64()
 
     // Char ID
-    local charID = plyDataSaver.GetLinvCharID(ply) || 1
+    local charID = ply:GetLinvCharID() || 1
 
     // Data
     local statistic = util.TableToJSON(plyDataSaver.GetStatistic(ply))
@@ -149,7 +115,7 @@ function plyDataSaver.loadPlyData(ply)
     local steamID64 = ply:SteamID64()
 
     // Char ID
-    local charID = plyDataSaver.GetLinvCharID(ply) || 1
+    local charID = ply:GetLinvCharID() || 1
 
     // Data
     LinvLib.SQL.Query("SELECT * FROM plyDataSaver WHERE steamID64 = '" .. steamID64 .. "' AND charID = '" .. charID .. "'", function(data)
@@ -209,6 +175,10 @@ function plyDataSaver.loadPlyData(ply)
             end
         end
 
+        if plyDataSaver.Config.loadName && variable["name"] then
+            ply:SetName(variable["name"])
+        end
+
         if plyDataSaver.Config.loadAmmo && variable["ammo"] then
             for ammoType, ammoCount in pairs(variable["ammo"]) do
                 ply:SetAmmo(ammoCount, ammoType)
@@ -241,7 +211,7 @@ function plyDataSaver.loadPlyData(ply)
         end
 
         // Call Hook
-        hook.Run("linv_plyDataSaver_loadPlyData", ply)
+        hook.Run("linv_plyDataSaver_loadPlyData", ply, data)
     end)
 end
 

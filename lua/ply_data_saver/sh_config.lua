@@ -20,6 +20,7 @@ plyDataSaver.Config.loadAmmo = true
 plyDataSaver.Config.loadHealth = true
 plyDataSaver.Config.loadArmor = true
 plyDataSaver.Config.loadFood = true
+plyDataSaver.Config.loadNam = true
 
 // Team
 plyDataSaver.Config.loadTeam = false
